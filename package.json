@@ -1,0 +1,23 @@
+{
+  "name": "input-slider-integer",
+  "version": "0.0.1",
+  "description": "A component that uses the slider and input-integer (wizard amigos)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "input-integer",
+    "slider",
+    "range",
+    "input-slider",
+    "wizard",
+    "amingos"
+  ],
+  "author": "EmmyB",
+  "license": "ISC",
+  "dependencies": {
+    "@emmyb/input-integer": "^0.1.3",
+    "input-slider": "^0.1.0"
+  }
+}
