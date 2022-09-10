@@ -1,12 +1,27 @@
 const slider = require("input-slider");
-const integer = require("@emmyb/input-integer");
+const integer = require("wizard-input-integer");
 const sliderTheme = require("input-slider/src/theme").light();
-const integerTheme = require("@emmyb/input-integer/src/theme").light();
+const integerTheme = require("wizard-input-integer/src/theme").light();
 
 function sliderInteger(opts) {
+  // unique state
+  const state = {};
+
+  // component communication
+
+  function protocol({ from }, notify) {
+    state[from] = { value: 0, notify };
+    return function (msg) {
+      const { from, type, data } = msg;
+      state[from].value = data;
+      if (type === "update") display.innerText = data;
+      console.log(state);
+    };
+  }
+
   // use Deps
-  const sliderComponent = slider({ theme: sliderTheme, ...opts }, listen);
-  const integerComponent = integer({ theme: integerTheme, ...opts }, listen);
+  const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
+  const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
 
   const el = createElement();
   const shadow = el.attachShadow({ mode: "closed" });
@@ -15,12 +30,6 @@ function sliderInteger(opts) {
   appendElement(shadow, sliderComponent, integerComponent, display);
 
   return el;
-  // component comm
-  function listen(msg) {
-    const { type, body } = msg;
-    if (type === "update") display.innerText = body;
-    console.log(type);
-  }
 }
 
 const createElement = ({ el = "div", className } = {}) => {

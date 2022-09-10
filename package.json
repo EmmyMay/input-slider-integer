@@ -17,12 +17,12 @@
   ],
   "author": "EmmyB",
   "license": "ISC",
-  "dependencies": {
-    "@emmyb/input-integer": "^0.1.4",
-    "input-slider": "^0.1.0"
-  },
   "devDependencies": {
     "browserify": "^17.0.0",
     "budo": "^11.8.4"
+  },
+  "dependencies": {
+    "input-slider": "^0.1.0",
+    "wizard-input-integer": "^0.1.44"
   }
 }
