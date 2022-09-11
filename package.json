@@ -1,6 +1,6 @@
 {
   "name": "input-slider-integer",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A component that uses the slider and input-integer (wizard amigos)",
   "main": "index.js",
   "scripts": {
