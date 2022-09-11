@@ -50,9 +50,8 @@ function sliderInteger(opts) {
 
   const el = createElement();
   const shadow = el.attachShadow({ mode: "closed" });
-  const display = createElement();
 
-  appendElement(shadow, sliderComponent, integerComponent, display);
+  appendElement(shadow, sliderComponent, integerComponent);
 
   return el;
 }
