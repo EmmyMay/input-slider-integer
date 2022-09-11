@@ -8,14 +8,25 @@ function sliderInteger(opts) {
   const state = {};
 
   // component communication
-
   function protocol({ from }, notify) {
     state[from] = { value: 0, notify };
+
     return function (msg) {
       const { from, type, data } = msg;
       state[from].value = data;
-      if (type === "update") display.innerText = data;
-      console.log(state);
+      if (from === "integer-0" && state[from].value !== 0) {
+        state["slider-0"].value = state[from].value;
+      } else if (from === "slider-0" && state[from].value !== 0) {
+        state["integer-0"].value = state[from].value;
+      }
+      let notify;
+      if (type === "update") {
+        notify = state["integer-0"].notify;
+        if (from === "integer-0") {
+          notify = state["slider-0"].notify;
+        }
+        notify({ type, data });
+      }
     };
   }
 
