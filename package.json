@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "input-slider": "^0.1.0",
-    "wizard-input-integer": "^0.1.44"
+    "wizard-input-integer": "^0.1.46"
   }
 }
