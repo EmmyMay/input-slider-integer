@@ -36,19 +36,24 @@ function sliderInteger(opts) {
 
     return function (msg) {
       const { from, type, data } = msg;
+
+      // update component value on state obj
       state[from].value = data;
-      if (from === "integer-0" && state[from].value !== 0) {
-        state["slider-0"].value = state[from].value;
-      } else if (from === "slider-0" && state[from].value !== 0) {
-        state["integer-0"].value = state[from].value;
-      }
+
       let notify;
       if (type === "update") {
         notify = state["integer-0"].notify;
+
+        // if we increment input-integer run the function that updates slider
         if (from === "integer-0") {
-          notify = state["slider-0"].notify;
+          notify = state["integer-0"].notify;
         }
         notify({ type, data });
+        if (from === "integer-0") {
+          state["slider-0"].value = state[from].value;
+        } else if (from === "slider-0") {
+          state["integer-0"].value = state[from].value;
+        }
       }
     };
   }
