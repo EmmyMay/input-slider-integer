@@ -2,6 +2,8 @@ const slider = require("input-slider");
 const integer = require("wizard-input-integer");
 const sliderTheme = require("input-slider/src/theme").light();
 const integerTheme = require("wizard-input-integer/src/theme").light();
+const slider2 = require("input-slider");
+const integer2 = require("wizard-input-integer");
 
 function sliderInteger(opts) {
   // unique state
@@ -10,11 +12,22 @@ function sliderInteger(opts) {
   // use Deps
   const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
   const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
+  const sliderComponent2 = slider2({ theme: sliderTheme, ...opts }, protocol);
+  const integerComponent2 = integer2(
+    { theme: integerTheme, ...opts },
+    protocol
+  );
 
   const el = createElement();
   const shadow = el.attachShadow({ mode: "closed" });
 
-  appendElement(shadow, sliderComponent, integerComponent);
+  appendElement(
+    shadow,
+    sliderComponent,
+    integerComponent,
+    sliderComponent2,
+    integerComponent2
+  );
 
   // component communication
   function protocol({ from }, notify) {
@@ -26,20 +39,14 @@ function sliderInteger(opts) {
       // update component value on state obj
       state[from].value = data;
 
-      let notify;
       if (type === "update") {
-        notify = state["integer-0"].notify;
-
-        // if we increment input-integer run the function that updates slider
-        if (from === "integer-0") {
-          notify = state["integer-0"].notify;
-        }
-        notify({ type, data });
-        if (from === "integer-0") {
-          state["slider-0"].value = state[from].value;
-        } else if (from === "slider-0") {
-          state["integer-0"].value = state[from].value;
-        }
+        Object.keys(state).forEach((item) => {
+          if (item !== from) {
+            state[item].notify({ type, data });
+            state[item].value = state[from].value;
+          }
+        });
+        console.log(state);
       }
     };
   }
