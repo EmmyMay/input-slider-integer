@@ -7,6 +7,15 @@ function sliderInteger(opts) {
   // unique state
   const state = {};
 
+  // use Deps
+  const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
+  const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
+
+  const el = createElement();
+  const shadow = el.attachShadow({ mode: "closed" });
+
+  appendElement(shadow, sliderComponent, integerComponent);
+
   // component communication
   function protocol({ from }, notify) {
     state[from] = { value: 0, notify };
@@ -30,22 +39,12 @@ function sliderInteger(opts) {
     };
   }
 
-  // use Deps
-  const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
-  const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
-
-  const el = createElement();
-  const shadow = el.attachShadow({ mode: "closed" });
-
-  appendElement(shadow, sliderComponent, integerComponent);
-
   return el;
 }
 
-const createElement = ({ el = "div", className } = {}) => {
+const createElement = ({ el = "div", attr, attrVal } = {}) => {
   const ele = document.createElement(el);
-  if (className) ele.classList.add(className);
-
+  if (attr && attrVal) ele.setAttribute(attr, attrVal);
   return ele;
 };
 
