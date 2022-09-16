@@ -2,32 +2,23 @@ const slider = require("input-slider");
 const integer = require("wizard-input-integer");
 const sliderTheme = require("input-slider/src/theme").light();
 const integerTheme = require("wizard-input-integer/src/theme").light();
-const slider2 = require("input-slider");
-const integer2 = require("wizard-input-integer");
 
 function sliderInteger(opts) {
   // unique state
   const state = {};
 
   // use Deps
-  const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
-  const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
-  const sliderComponent2 = slider2({ theme: sliderTheme, ...opts }, protocol);
-  const integerComponent2 = integer2(
-    { theme: integerTheme, ...opts },
-    protocol
-  );
+  const elements = [
+    slider({ theme: sliderTheme, ...opts }, protocol), // slider 1
+    integer({ theme: integerTheme, ...opts }, protocol), // integer 1
+    slider({ theme: sliderTheme, ...opts }, protocol), // slider 2
+    integer({ theme: integerTheme, ...opts }, protocol), // integer 2
+  ];
 
-  const el = createElement();
+  const el = document.createElement("div");
   const shadow = el.attachShadow({ mode: "closed" });
 
-  appendElement(
-    shadow,
-    sliderComponent,
-    integerComponent,
-    sliderComponent2,
-    integerComponent2
-  );
+  shadow.append(...elements);
 
   // component communication
   function protocol({ from }, notify) {
@@ -53,15 +44,5 @@ function sliderInteger(opts) {
 
   return el;
 }
-
-const createElement = ({ el = "div", attr, attrVal } = {}) => {
-  const ele = document.createElement(el);
-  if (attr && attrVal) ele.setAttribute(attr, attrVal);
-  return ele;
-};
-
-const appendElement = (target, ...children) => {
-  target.append(...children);
-};
 
 module.exports = sliderInteger;
