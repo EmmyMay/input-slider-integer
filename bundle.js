@@ -16,32 +16,23 @@ const slider = require("input-slider");
 const integer = require("wizard-input-integer");
 const sliderTheme = require("input-slider/src/theme").light();
 const integerTheme = require("wizard-input-integer/src/theme").light();
-const slider2 = require("input-slider");
-const integer2 = require("wizard-input-integer");
 
 function sliderInteger(opts) {
   // unique state
   const state = {};
 
   // use Deps
-  const sliderComponent = slider({ theme: sliderTheme, ...opts }, protocol);
-  const integerComponent = integer({ theme: integerTheme, ...opts }, protocol);
-  const sliderComponent2 = slider2({ theme: sliderTheme, ...opts }, protocol);
-  const integerComponent2 = integer2(
-    { theme: integerTheme, ...opts },
-    protocol
-  );
+  const elements = [
+    slider({ theme: sliderTheme, ...opts }, protocol), // slider 1
+    integer({ theme: integerTheme, ...opts }, protocol), // integer 1
+    slider({ theme: sliderTheme, ...opts }, protocol), // slider 2
+    integer({ theme: integerTheme, ...opts }, protocol), // integer 2
+  ];
 
-  const el = createElement();
+  const el = document.createElement("div");
   const shadow = el.attachShadow({ mode: "closed" });
 
-  appendElement(
-    shadow,
-    sliderComponent,
-    integerComponent,
-    sliderComponent2,
-    integerComponent2
-  );
+  shadow.append(...elements);
 
   // component communication
   function protocol({ from }, notify) {
@@ -68,34 +59,29 @@ function sliderInteger(opts) {
   return el;
 }
 
-const createElement = ({ el = "div", attr, attrVal } = {}) => {
-  const ele = document.createElement(el);
-  if (attr && attrVal) ele.setAttribute(attr, attrVal);
-  return ele;
-};
-
-const appendElement = (target, ...children) => {
-  target.append(...children);
-};
-
 module.exports = sliderInteger;
 
 },{"input-slider":3,"input-slider/src/theme":5,"wizard-input-integer":7,"wizard-input-integer/src/theme":9}],3:[function(require,module,exports){
 let id = 0;
 
 function rangeSlider(opts, protocol, on = {}) {
+  // event name
+  const componentName = `slider-${id++}`;
   const { theme, min = 0, max = 100 } = opts;
 
   // creating dom elements
-  const el = createElement();
+  const el = document.createElement("div");
   const shadow = el.attachShadow({ mode: "closed" });
-  const input = createElement({ el: "input" });
-  const bar = createElement({ attr: "class", attrVal: "bar" });
-  const ruler = createElement({ attr: "class", attrVal: "ruler" });
-  const fill = createElement({ attr: "class", attrVal: "fill" });
 
-  // event name
-  const componentName = `slider-${id++}`;
+  shadow.innerHTML = `
+  <input/>
+  <div class="bar">
+  <div class="ruler"></div>
+  <div class="fill"></div>
+  </div>
+`;
+  const [input, bar] = shadow.children;
+  const [, fill] = bar.children;
 
   // Component communication
   const notify = protocol({ from: componentName }, listen);
@@ -112,10 +98,6 @@ function rangeSlider(opts, protocol, on = {}) {
   input.min = min;
   input.max = max;
   input.value = min;
-
-  // appending dom elements
-  appendElement(bar, ruler, fill);
-  appendElement(shadow, input, bar);
 
   // handling events
   input.oninput = (e) => {
@@ -137,16 +119,6 @@ const styleComponent = (theme, shadow) => {
   const styleSheet = new CSSStyleSheet();
   styleSheet.replaceSync(theme);
   shadow.adoptedStyleSheets = [styleSheet];
-};
-
-const createElement = ({ el = "div", attr, attrVal } = {}) => {
-  const ele = document.createElement(el);
-  if (attr && attrVal) ele.setAttribute(attr, attrVal);
-  return ele;
-};
-
-const appendElement = (target, ...children) => {
-  target.append(...children);
 };
 
 const modifyElement = (el, sliderValue, max = 100, shadow) => {
@@ -287,43 +259,33 @@ module.exports = theme;
 let id = 0;
 
 function inputInteger(options, protocol, on = {}) {
+  // component name
+  const componentName = `integer-${id++}`;
+
   const {
     min = 0,
     max = 1000,
     theme,
-    label = "Input Integer",
+    labelValue = "Input Integer",
     inputId = "Input-Integer",
     step = "0",
   } = options;
 
-  // component name
-  const componentName = `integer-${id++}`;
-  const el = createElement({ attr: "id", attrVal: "input_wrapper" });
-
+  const el = document.createElement("div");
   const shadow = el.attachShadow({ mode: "closed" });
 
-  const input = createElement({ el: "input", attr: "id", attrVal: inputId });
-  input.type = "number";
-  input.min = min;
-  input.max = max;
-  input.step = step;
+  shadow.innerHTML = `
+  <div>
+    <label for="${inputId}">${labelValue}</label>
+    <input min="${min}" max="${max}" step="${step}" type="number">
+  </div>
+`;
+  const [, input] = shadow.firstElementChild.children;
 
   // event handling
   input.onkeyup = (e) => handle_onkeyup(e, input);
   input.onmouseleave = (e) => clearInput(e, input);
   input.onblur = (e) => clearInput(e, input);
-
-  const inputLabel = createElement({
-    el: "label",
-    attr: "for",
-    attrVal: inputId,
-  });
-  inputLabel.textContent = label;
-
-  const inputContainer = createElement();
-  appendElement(inputContainer, inputLabel, input);
-
-  appendElement(shadow, inputContainer);
 
   // capturing events
   Object.keys(on).map((K) => {
@@ -360,14 +322,6 @@ const styleComponent = (theme, shadow) => {
   const styleSheet = new CSSStyleSheet();
   styleSheet.replaceSync(theme);
   shadow.adoptedStyleSheets = [styleSheet];
-};
-const createElement = ({ el = "div", attr, attrVal } = {}) => {
-  const ele = document.createElement(el);
-  if (attr && attrVal) ele.setAttribute(attr, attrVal);
-  return ele;
-};
-const appendElement = (target, ...children) => {
-  target.append(...children);
 };
 module.exports = inputInteger;
 
